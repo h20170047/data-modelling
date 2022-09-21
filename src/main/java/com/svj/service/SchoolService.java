@@ -8,6 +8,7 @@ import com.svj.repository.InstructorDetailsRepository;
 import com.svj.repository.InstructorRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -64,6 +65,15 @@ public class SchoolService {
             instructor.addCourse(course);
 //            return instructorRepository.save(instructor);
             courseRepository.save(course);
+        }
+        return null;
+    }
+
+    public List<Course> getCoursesOfInstructor(String instructorId) {
+        Optional<Instructor> optionalInstructor= instructorRepository.findById(Integer.parseInt(instructorId));
+        if(optionalInstructor.isPresent()){
+            Instructor instructor= optionalInstructor.get();
+            return instructor.getCourseList();
         }
         return null;
     }

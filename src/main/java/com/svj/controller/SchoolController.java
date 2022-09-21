@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/school")
 public class SchoolController {
@@ -46,10 +48,16 @@ public class SchoolController {
         return new ResponseEntity(null, HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("/course/{instructorId}")
+    @PostMapping("/courses/{instructorId}")
     public ResponseEntity createCourse(@RequestBody Course course, @PathVariable String instructorId){
         Instructor savedInstructor= schoolService.saveCourse(course, instructorId);
         return new ResponseEntity(savedInstructor, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/instructors/courses/{instructorId}")
+    public ResponseEntity getCoursesOfInstructor(@PathVariable String instructorId){
+        List<Course> courses= schoolService.getCoursesOfInstructor(instructorId);
+        return new ResponseEntity(courses, HttpStatus.OK);
     }
 
 
