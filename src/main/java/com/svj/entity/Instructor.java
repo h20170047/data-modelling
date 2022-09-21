@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.LinkedList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,10 +31,21 @@ public class Instructor {
 	@Column(name="email")
 	private String email;
 
-	@OneToOne(cascade= {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH} )
+	@OneToMany(mappedBy = "instructor", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+	@JsonIgnoreProperties("instructor")
+	private List<Course> courseList;
+
+	@OneToOne(cascade= CascadeType.ALL )
 	@JoinColumn(name="instructor_detail_id")
 	@JsonIgnoreProperties("instructor")
 	private InstructorDetail instructorDetail;
+
+	public void addCourse(Course course){
+		if(courseList== null)
+			courseList= new LinkedList<>();
+		courseList.add(course);
+		course.setInstructor(this);
+	}
 }
 
 

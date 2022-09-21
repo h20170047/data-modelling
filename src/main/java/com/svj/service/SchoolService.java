@@ -1,7 +1,9 @@
 package com.svj.service;
 
+import com.svj.entity.Course;
 import com.svj.entity.Instructor;
 import com.svj.entity.InstructorDetail;
+import com.svj.repository.CourseRepository;
 import com.svj.repository.InstructorDetailsRepository;
 import com.svj.repository.InstructorRepository;
 import org.springframework.stereotype.Service;
@@ -12,9 +14,12 @@ import java.util.Optional;
 public class SchoolService {
     private InstructorRepository instructorRepository;
     private InstructorDetailsRepository instructorDetailsRepository;
-    public SchoolService(InstructorRepository instructorRepository, InstructorDetailsRepository instructorDetailsRepository){
+    private CourseRepository courseRepository;
+
+    public SchoolService(InstructorRepository instructorRepository, InstructorDetailsRepository instructorDetailsRepository, CourseRepository courseRepository){
         this.instructorRepository= instructorRepository;
         this.instructorDetailsRepository= instructorDetailsRepository;
+        this.courseRepository= courseRepository;
     }
 
     public Instructor saveInstructor(Instructor instructor) {
@@ -25,7 +30,7 @@ public class SchoolService {
         instructorRepository.deleteById(Integer.parseInt(id));
     }
 
-    public Instructor getInstructorFromDetailsID(String instrDetailsID) {
+    public Instructor getInstructorDetailsFromID(String instrDetailsID) {
         Optional<InstructorDetail> instructorDetailOptional = instructorDetailsRepository.findById(Integer.parseInt(instrDetailsID));
         if(instructorDetailOptional.isPresent())
             return instructorDetailOptional.get().getInstructor();
@@ -41,5 +46,25 @@ public class SchoolService {
             instructor.setInstructorDetail(null);
             instructorDetailsRepository.delete(instructorDetail1);
         }
+    }
+
+    public Instructor getInstructorFromID(String instructorId) {
+        Optional<Instructor> instructorOptional = instructorRepository.findById(Integer.parseInt(instructorId));
+        if(instructorOptional.isPresent()){
+            Instructor instructor= instructorOptional.get();
+            return instructor;
+        }
+        return null;
+    }
+
+    public Instructor saveCourse(Course course, String instructorId) {
+        Optional<Instructor> optionalInstructor= instructorRepository.findById(Integer.parseInt(instructorId));
+        if(optionalInstructor.isPresent()){
+            Instructor instructor= optionalInstructor.get();
+            instructor.addCourse(course);
+//            return instructorRepository.save(instructor);
+            courseRepository.save(course);
+        }
+        return null;
     }
 }
