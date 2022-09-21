@@ -18,13 +18,13 @@ public class SchoolController {
         this.schoolService= schoolService;
     }
 
-    @PostMapping("/instructor")
+    @PostMapping("/instructors")
     public ResponseEntity<Instructor> saveInstructor(@RequestBody Instructor instructor){
         Instructor saveInstructor = schoolService.saveInstructor(instructor);
         return new ResponseEntity<>(saveInstructor, HttpStatus.OK);
     }
 
-    @DeleteMapping("/instructor/{id}")
+    @DeleteMapping("/instructors/{id}")
     public ResponseEntity deleteInstructor(@PathVariable String id){
         schoolService.deleteInstructor(id);
         return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
@@ -36,15 +36,21 @@ public class SchoolController {
         return new ResponseEntity(instructor, HttpStatus.OK);
     }
 
-    @GetMapping("/instructor/{id}")
+    @GetMapping("/instructors/{id}")
     public ResponseEntity getInstructorById(@PathVariable(value = "id") String instructorId){
         Instructor instructor= schoolService.getInstructorFromID(instructorId);
         return new ResponseEntity(instructor, HttpStatus.OK);
     }
 
-    @DeleteMapping("/instructorDetails/alone/{id}")
+    @DeleteMapping("/instructorDetails/{id}")
     public ResponseEntity deleteInstructorDetailsOnly(@PathVariable(value = "id") String instrDetailsID){
         schoolService.deleteOnlyInstructorDetails(instrDetailsID);
+        return new ResponseEntity(null, HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping("/courses/{courseId}")
+    public ResponseEntity deleteCourse(@PathVariable String courseId){
+        schoolService.deleteCourse(courseId);
         return new ResponseEntity(null, HttpStatus.NO_CONTENT);
     }
 

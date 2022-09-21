@@ -77,4 +77,8 @@ public class SchoolService {
         }
         return null;
     }
+
+    public void deleteCourse(String courseId) {
+        courseRepository.deleteById(Integer.parseInt(courseId));
+    }
 }
