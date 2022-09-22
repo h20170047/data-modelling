@@ -2,6 +2,7 @@ package com.svj.controller;
 
 import com.svj.entity.Course;
 import com.svj.entity.Instructor;
+import com.svj.entity.Review;
 import com.svj.service.SchoolService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +59,12 @@ public class SchoolController {
     public ResponseEntity createCourse(@RequestBody Course course, @PathVariable String instructorId){
         Instructor savedInstructor= schoolService.saveCourse(course, instructorId);
         return new ResponseEntity(savedInstructor, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/courses/{courseId}/reviews")
+    public ResponseEntity createReview(@RequestBody Review review, @PathVariable String courseId){
+        Course savedCourse= schoolService.saveReview(courseId, review);
+        return new ResponseEntity(savedCourse, HttpStatus.CREATED);
     }
 
     @GetMapping("/instructors/courses/{instructorId}")

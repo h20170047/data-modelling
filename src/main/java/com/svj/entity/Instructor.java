@@ -31,7 +31,7 @@ public class Instructor {
 	@Column(name="email")
 	private String email;
 
-	@OneToMany(mappedBy = "instructor", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "instructor", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
 	@JsonIgnoreProperties("instructor")
 	private List<Course> courseList;
 

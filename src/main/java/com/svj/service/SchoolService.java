@@ -3,6 +3,7 @@ package com.svj.service;
 import com.svj.entity.Course;
 import com.svj.entity.Instructor;
 import com.svj.entity.InstructorDetail;
+import com.svj.entity.Review;
 import com.svj.repository.CourseRepository;
 import com.svj.repository.InstructorDetailsRepository;
 import com.svj.repository.InstructorRepository;
@@ -65,6 +66,7 @@ public class SchoolService {
             instructor.addCourse(course);
 //            return instructorRepository.save(instructor);
             courseRepository.save(course);
+            return instructor;
         }
         return null;
     }
@@ -80,5 +82,16 @@ public class SchoolService {
 
     public void deleteCourse(String courseId) {
         courseRepository.deleteById(Integer.parseInt(courseId));
+    }
+
+    public Course saveReview(String courseId, Review review) {
+        Optional<Course> courseOptional= courseRepository.findById(Integer.parseInt(courseId));
+        if(courseOptional.isPresent()){
+            Course course= courseOptional.get();
+            course.addReview(review);
+            courseRepository.save(course);
+            return course;
+        }
+        return null;
     }
 }
