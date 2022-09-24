@@ -3,6 +3,7 @@ package com.svj.controller;
 import com.svj.entity.Course;
 import com.svj.entity.Instructor;
 import com.svj.entity.Review;
+import com.svj.entity.Student;
 import com.svj.service.SchoolService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,8 +58,8 @@ public class SchoolController {
 
     @PostMapping("/courses/{instructorId}")
     public ResponseEntity createCourse(@RequestBody Course course, @PathVariable String instructorId){
-        Instructor savedInstructor= schoolService.saveCourse(course, instructorId);
-        return new ResponseEntity(savedInstructor, HttpStatus.CREATED);
+        Course savedCourse= schoolService.saveCourse(course, instructorId);
+        return new ResponseEntity(savedCourse, HttpStatus.CREATED);
     }
 
     @PostMapping("/courses/{courseId}/reviews")
@@ -73,5 +74,23 @@ public class SchoolController {
         return new ResponseEntity(courses, HttpStatus.OK);
     }
 
+    @PostMapping("/enroll/course/{courseId}/{studentId}")
+    public ResponseEntity enrollStudent(@PathVariable String courseId, @PathVariable String studentId){
+        // Return enrolled courses for the student
+        Student student= schoolService.enrollToCourse(courseId, studentId);
+        return new ResponseEntity(student, HttpStatus.OK);
+    }
+
+    @GetMapping("/courses/{courseId}")
+    public ResponseEntity getCourseDetails(@PathVariable String courseId){
+        Course course= schoolService.getCourseDetails(courseId);
+        return new ResponseEntity(course, HttpStatus.OK);
+    }
+
+    @PostMapping("/students")
+    public ResponseEntity addStudent(@RequestBody Student student){
+        Student savedStudent= schoolService.saveStudent(student);
+        return new ResponseEntity(savedStudent, HttpStatus.OK);
+    }
 
 }

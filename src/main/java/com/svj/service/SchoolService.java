@@ -1,14 +1,13 @@
 package com.svj.service;
 
-import com.svj.entity.Course;
-import com.svj.entity.Instructor;
-import com.svj.entity.InstructorDetail;
-import com.svj.entity.Review;
+import com.svj.entity.*;
 import com.svj.repository.CourseRepository;
 import com.svj.repository.InstructorDetailsRepository;
 import com.svj.repository.InstructorRepository;
+import com.svj.repository.StudentRepository;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,11 +16,15 @@ public class SchoolService {
     private InstructorRepository instructorRepository;
     private InstructorDetailsRepository instructorDetailsRepository;
     private CourseRepository courseRepository;
+    private StudentRepository studentRepository;
 
-    public SchoolService(InstructorRepository instructorRepository, InstructorDetailsRepository instructorDetailsRepository, CourseRepository courseRepository){
+    public SchoolService(InstructorRepository instructorRepository,
+                         InstructorDetailsRepository instructorDetailsRepository,
+                         CourseRepository courseRepository, StudentRepository studentRepository){
         this.instructorRepository= instructorRepository;
         this.instructorDetailsRepository= instructorDetailsRepository;
         this.courseRepository= courseRepository;
+        this.studentRepository= studentRepository;
     }
 
     public Instructor saveInstructor(Instructor instructor) {
@@ -59,16 +62,15 @@ public class SchoolService {
         return null;
     }
 
-    public Instructor saveCourse(Course course, String instructorId) {
+    public Course saveCourse(Course course, String instructorId) {
         Optional<Instructor> optionalInstructor= instructorRepository.findById(Integer.parseInt(instructorId));
         if(optionalInstructor.isPresent()){
             Instructor instructor= optionalInstructor.get();
             instructor.addCourse(course);
 //            return instructorRepository.save(instructor);
-            courseRepository.save(course);
-            return instructor;
         }
-        return null;
+        Course savedCourse = courseRepository.save(course);
+        return savedCourse;
     }
 
     public List<Course> getCoursesOfInstructor(String instructorId) {
@@ -81,7 +83,10 @@ public class SchoolService {
     }
 
     public void deleteCourse(String courseId) {
-        courseRepository.deleteById(Integer.parseInt(courseId));
+        Optional<Course> courseOptional = courseRepository.findById(Integer.parseInt(courseId));
+        if(courseOptional.isPresent()){
+            courseRepository.delete(courseOptional.get());
+        }
     }
 
     public Course saveReview(String courseId, Review review) {
@@ -93,5 +98,39 @@ public class SchoolService {
             return course;
         }
         return null;
+    }
+
+    public Student enrollToCourse(String courseId, String studentId) {
+        Optional<Course> courseOptional= courseRepository.findById(Integer.parseInt(courseId));
+        Optional<Student> studentOptional= studentRepository.findById(Integer.parseInt(studentId));
+        if(courseOptional.isPresent() && studentOptional.isPresent()){
+            Course course= courseOptional.get();
+            Student student= studentOptional.get();
+            course.addStudent(student);
+            student.addCourse(course);
+            courseRepository.save(course);
+            return student;
+        }
+        return null;
+    }
+
+    public Course getCourseDetails(String courseId) {
+        Optional<Course> course= courseRepository.findById(Integer.parseInt(courseId));
+        if(course.isPresent()){
+            return course.get();
+        }
+        return null;
+    }
+
+    public Student saveStudent(Student student) {
+        Student savedStudent= studentRepository.save(student);
+        return savedStudent;
+    }
+
+
+    @PostConstruct
+    public void setup(){
+        // add student, courses, enroll student to courses.
+        // Manually delete a course
     }
 }
