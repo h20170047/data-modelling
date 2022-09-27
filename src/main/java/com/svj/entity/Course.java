@@ -1,14 +1,9 @@
 package com.svj.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.hibernate.annotations.Cascade;
+import lombok.*;
 
 import javax.persistence.*;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -19,6 +14,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,25 +37,14 @@ public class Course {
         reviews.add(review);
     }
 
-    @Cascade({
-            org.hibernate.annotations.CascadeType.SAVE_UPDATE,
-            org.hibernate.annotations.CascadeType.MERGE,
-            org.hibernate.annotations.CascadeType.PERSIST
-    })
-    @ManyToMany(mappedBy = "courses",
-            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-//    @JoinTable(
-//        name = "course_student",
-//        joinColumns =@JoinColumn(name = "course_id"),
-//        inverseJoinColumns = @JoinColumn(name="student_id")
-//    )
+    @ManyToMany(mappedBy = "courses", fetch = FetchType.EAGER)
     @JsonIgnoreProperties("courses")
     private Set<Student> students;
 
-    public void addStudent(Student student){
-        if(students== null){
-            students= new HashSet<>();
+    // in a many-many relationship, the non-owner needs a helper method to remove its instance from other objects in many-many relationship
+    public void removeStudentFromCourse(){
+        for(Student student: students){
+            student.removeCourse(this);
         }
-        students.add(student);
     }
 }

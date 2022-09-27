@@ -46,6 +46,12 @@ public class Instructor {
 		courseList.add(course);
 		course.setInstructor(this);
 	}
+
+	public void deleteCourses(){
+		for(Course course: courseList){
+			course.setInstructor(null);
+		}
+	}
 }
 
 

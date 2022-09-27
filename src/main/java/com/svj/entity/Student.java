@@ -2,19 +2,19 @@ package com.svj.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 @Table(name="student")
 public class Student {
 
@@ -32,9 +32,9 @@ public class Student {
 	@Column(name="email")
 	private String email;
 
-	@ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+	@ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
 	@JoinTable(
-			name = "course_student",
+			name = "student_course",
 			joinColumns =@JoinColumn(name = "student_id"),
 			inverseJoinColumns = @JoinColumn(name="course_id")
 	)
@@ -46,6 +46,15 @@ public class Student {
 			courses= new HashSet<>();
 		}
 		courses.add(course);
+		if(course.getStudents()== null){
+			course.setStudents(new HashSet<>());
+		}
+		course.getStudents().add(this);
+	}
+
+	public void removeCourse(Course course){
+		courses.remove(course);
+		course.getStudents().remove(this);
 	}
 
 }
